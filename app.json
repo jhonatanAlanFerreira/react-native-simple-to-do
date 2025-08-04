@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "simple-todo",
-    "slug": "simple-todo",
+    "name": "react-native-simple-to-do",
+    "slug": "react-native-simple-to-do",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "simpletodo",
+    "scheme": "reactnativesimpletodo",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
@@ -33,7 +33,8 @@
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
         }
-      ]
+      ],
+      "expo-sqlite"
     ],
     "experiments": {
       "typedRoutes": true
