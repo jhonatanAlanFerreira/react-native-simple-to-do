@@ -30,7 +30,7 @@ export function CheckboxItem({
   };
 
   return (
-    <View>
+    <View className="p-3 flex flex-row items-center justify-between">
       {!!item.id && (
         <Checkbox value={isChecked} onValueChange={setChecked}></Checkbox>
       )}
