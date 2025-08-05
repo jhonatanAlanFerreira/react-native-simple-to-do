@@ -1,6 +1,6 @@
 import { Item } from "@/types/global";
 import Checkbox from "expo-checkbox";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button, TextInput, View } from "react-native";
 
 export function CheckboxItem({
@@ -16,6 +16,7 @@ export function CheckboxItem({
 }) {
   const [item, setItem] = useState<Item>({ id: 0, description: "" });
   const [isChecked, setChecked] = useState(false);
+  const inputRef = useRef<TextInput>(null);
 
   useEffect(() => {
     setItem(todoItem);
@@ -26,6 +27,9 @@ export function CheckboxItem({
 
     if (!item.id) {
       setItem({ id: 0, description: "" });
+      setTimeout(() => {
+        inputRef.current?.focus();
+      }, 50);
     }
   };
 
@@ -38,6 +42,7 @@ export function CheckboxItem({
       {!!item.id && <Checkbox value={isChecked} onValueChange={setChecked} />}
 
       <TextInput
+        ref={inputRef}
         className={item.id ? "flex-1 mx-2" : ""}
         placeholder="New Item"
         value={item.description}
