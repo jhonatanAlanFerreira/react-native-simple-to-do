@@ -1,4 +1,4 @@
-import { CheckboxItem } from "@/components/CheckboxItem";
+import { CheckboxItem } from "@/components/CheckboxItem/CheckboxItem";
 import { db } from "@/db/client";
 import { todoItems } from "@/db/schema";
 import { Item } from "@/types/global";
@@ -43,13 +43,7 @@ export default function Index() {
   };
 
   return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
+    <View>
       {items.map((item, i) => (
         <CheckboxItem
           key={i}
