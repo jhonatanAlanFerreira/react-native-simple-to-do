@@ -14,6 +14,10 @@ export default function Index() {
   }, []);
 
   const saveItem = async (item: Item) => {
+    if (!item.description) {
+      return;
+    }
+
     if (item.id) {
       await db
         .update(todoItems)
@@ -43,7 +47,7 @@ export default function Index() {
   };
 
   return (
-    <View>
+    <View className="mt-8">
       {items.map((item, i) => (
         <CheckboxItem
           key={i}

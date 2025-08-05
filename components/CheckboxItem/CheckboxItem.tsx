@@ -25,7 +25,7 @@ export function CheckboxItem({
   const resetAndBlur = () => {
     onBlur(item);
 
-    if (!item.id) {
+    if (!item.id && item.description) {
       setItem({ id: 0, description: "" });
       setTimeout(() => {
         inputRef.current?.focus();
@@ -35,7 +35,7 @@ export function CheckboxItem({
 
   return (
     <View
-      className={`p-3 flex flex-row items-center ${
+      className={`pl-5 pr-5 flex flex-row items-center ${
         item.id ? "justify-between" : "justify-center"
       }`}
     >
@@ -46,7 +46,7 @@ export function CheckboxItem({
         className={item.id ? "flex-1 mx-2" : ""}
         placeholder="New Item"
         value={item.description}
-        onSubmitEditing={resetAndBlur}
+        onBlur={resetAndBlur}
         onChangeText={(description) =>
           setItem((prev) => ({ ...prev, description }))
         }

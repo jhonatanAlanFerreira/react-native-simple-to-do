@@ -8,7 +8,7 @@ export default function RootLayout() {
   return (
     <>
       <SQLiteProvider databaseName="todo.db" onInit={createSchemaIfNeeded}>
-        <Stack />
+        <Stack screenOptions={{ headerShown: false }} />
       </SQLiteProvider>
       <StatusBar style="auto" />
     </>
