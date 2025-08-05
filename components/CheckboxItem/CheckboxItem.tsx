@@ -30,27 +30,25 @@ export function CheckboxItem({
   };
 
   return (
-    <View className="p-3 flex flex-row items-center justify-between">
-      {!!item.id && (
-        <Checkbox value={isChecked} onValueChange={setChecked}></Checkbox>
-      )}
+    <View
+      className={`p-3 flex flex-row items-center ${
+        item.id ? "justify-between" : "justify-center"
+      }`}
+    >
+      {!!item.id && <Checkbox value={isChecked} onValueChange={setChecked} />}
+
       <TextInput
+        className={item.id ? "flex-1 mx-2" : ""}
         placeholder="New Item"
         value={item.description}
         onSubmitEditing={resetAndBlur}
         onChangeText={(description) =>
           setItem((prev) => ({ ...prev, description }))
         }
-      ></TextInput>
-      {!!item.id && (
-        <Button
-          title="Delete"
-          onPress={() => {
-            if (onDelete) {
-              onDelete(item);
-            }
-          }}
-        ></Button>
+      />
+
+      {!!item.id && onDelete && (
+        <Button title="Delete" onPress={() => onDelete(item)} />
       )}
     </View>
   );
