@@ -1,7 +1,7 @@
 import { Item } from "@/types/global";
 import Checkbox from "expo-checkbox";
 import { useEffect, useRef, useState } from "react";
-import { Button, TextInput, View } from "react-native";
+import { Pressable, Text, TextInput, View } from "react-native";
 
 export function CheckboxItem({
   todoItem,
@@ -53,7 +53,9 @@ export function CheckboxItem({
       />
 
       {!!item.id && onDelete && (
-        <Button title="Delete" onPress={() => onDelete(item)} />
+        <Pressable onPress={() => onDelete(item)} className="px-2">
+          <Text className="text-red-500 text-xl font-bold">×</Text>
+        </Pressable>
       )}
     </View>
   );
