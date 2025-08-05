@@ -1,7 +1,7 @@
 import { Item } from "@/types/global";
 import Checkbox from "expo-checkbox";
 import { useEffect, useRef, useState } from "react";
-import { Pressable, Text, TextInput, View } from "react-native";
+import { Button, Pressable, Text, TextInput, View } from "react-native";
 
 export function CheckboxItem({
   todoItem,
@@ -16,6 +16,7 @@ export function CheckboxItem({
 }) {
   const [item, setItem] = useState<Item>({ id: 0, description: "" });
   const [isChecked, setChecked] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
   const inputRef = useRef<TextInput>(null);
 
   useEffect(() => {
@@ -23,6 +24,7 @@ export function CheckboxItem({
   }, [todoItem]);
 
   const resetAndBlur = () => {
+    setIsFocused(false);
     onBlur(item);
 
     if (!item.id && item.description) {
@@ -35,22 +37,25 @@ export function CheckboxItem({
 
   return (
     <View
-      className={`pl-5 pr-5 flex flex-row items-center ${
-        item.id ? "justify-between" : "justify-center"
-      }`}
+      className={"pl-5 pr-5 flex flex-row items-center justify-between gap-3"}
     >
       {!!item.id && <Checkbox value={isChecked} onValueChange={setChecked} />}
 
       <TextInput
         ref={inputRef}
-        className={item.id ? "flex-1 mx-2" : ""}
+        className="flex-1 mx-2"
         placeholder="New Item"
         value={item.description}
         onBlur={resetAndBlur}
+        onKeyPress={() => setIsFocused(true)}
         onChangeText={(description) =>
           setItem((prev) => ({ ...prev, description }))
         }
       />
+
+      {isFocused && (
+        <Button onPress={resetAndBlur} color={"green"} title="Save"></Button>
+      )}
 
       {!!item.id && onDelete && (
         <Pressable onPress={() => onDelete(item)} className="px-2">
