@@ -1,27 +1,48 @@
 import { Item } from "@/types/global";
 import Checkbox from "expo-checkbox";
-import { useEffect, useRef, useState } from "react";
-import { Button, Pressable, Text, TextInput, View } from "react-native";
+import {
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from "react";
+import {
+  Button,
+  Pressable,
+  TextInput as RNTextInput,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
 
-export function CheckboxItem({
-  todoItem,
-  onBlur,
-  onSelectChange,
-  onDelete,
-}: {
-  todoItem: Item;
-  onBlur: (item: Item) => void;
-  onSelectChange: () => void;
-  onDelete?: (item: Item) => void;
-}) {
+export interface CheckboxItemHandles {
+  focus: () => void;
+}
+
+export const CheckboxItem = forwardRef<
+  CheckboxItemHandles,
+  {
+    todoItem: Item;
+    onBlur: (item: Item) => void;
+    onSelectChange: () => void;
+    onDelete?: (item: Item) => void;
+  }
+>(({ todoItem, onBlur, onSelectChange, onDelete }, ref) => {
   const [item, setItem] = useState<Item>({ id: 0, description: "" });
   const [isChecked, setChecked] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
-  const inputRef = useRef<TextInput>(null);
+  const inputRef = useRef<RNTextInput>(null);
 
   useEffect(() => {
     setItem(todoItem);
   }, [todoItem]);
+
+  useImperativeHandle(ref, () => ({
+    focus: () => {
+      inputRef.current?.focus();
+    },
+  }));
 
   const resetAndBlur = () => {
     setIsFocused(false);
@@ -29,16 +50,11 @@ export function CheckboxItem({
 
     if (!item.id && item.description) {
       setItem({ id: 0, description: "" });
-      setTimeout(() => {
-        inputRef.current?.focus();
-      }, 50);
     }
   };
 
   return (
-    <View
-      className={"pl-5 pr-5 flex flex-row items-center justify-between gap-3"}
-    >
+    <View className="pl-5 pr-5 flex flex-row items-center justify-between gap-3">
       {!!item.id && <Checkbox value={isChecked} onValueChange={setChecked} />}
 
       <TextInput
@@ -54,7 +70,7 @@ export function CheckboxItem({
       />
 
       {isFocused && (
-        <Button onPress={resetAndBlur} color={"green"} title="Save"></Button>
+        <Button onPress={resetAndBlur} color={"green"} title="Save" />
       )}
 
       {!!item.id && onDelete && (
@@ -64,4 +80,4 @@ export function CheckboxItem({
       )}
     </View>
   );
-}
+});
