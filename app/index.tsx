@@ -7,11 +7,17 @@ import { todoItems } from "@/db/schema";
 import { Item } from "@/types/global";
 import { eq } from "drizzle-orm";
 import { useEffect, useRef, useState } from "react";
-import { KeyboardAvoidingView, ScrollView, View } from "react-native";
+import {
+  ActivityIndicator,
+  KeyboardAvoidingView,
+  ScrollView,
+  View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Index() {
   const [items, setItems] = useState<Item[]>([]);
+  const [loading, setLoading] = useState(true);
   const checkboxItemRef = useRef<CheckboxItemHandles>(null);
   const scrollRef = useRef<ScrollView>(null);
 
@@ -48,8 +54,12 @@ export default function Index() {
   };
 
   const loadItems = async () => {
+    setLoading(true);
+
     const res = await db.select().from(todoItems);
     setItems(res as Item[]);
+
+    setLoading(false);
   };
 
   const onDelete = (item: Item) => {
@@ -60,27 +70,35 @@ export default function Index() {
 
   return (
     <SafeAreaView className="h-full bg-gray-200 p-5">
-      <View className="bg-white h-full rounded-lg">
-        <KeyboardAvoidingView behavior="padding" keyboardVerticalOffset={100}>
-          <ScrollView ref={scrollRef}>
-            {items.map((item, i) => (
+      {loading && (
+        <View className="absolute w-screen h-screen flex justify-center z-10">
+          <ActivityIndicator size="small" color="#0000ff" />
+        </View>
+      )}
+
+      {!loading && (
+        <View className="bg-white h-full rounded-lg">
+          <KeyboardAvoidingView behavior="padding" keyboardVerticalOffset={100}>
+            <ScrollView ref={scrollRef}>
+              {items.map((item, i) => (
+                <CheckboxItem
+                  key={i}
+                  onSelectChange={() => true}
+                  onBlur={(item) => saveItem(item)}
+                  todoItem={item}
+                  onDelete={onDelete}
+                ></CheckboxItem>
+              ))}
               <CheckboxItem
-                key={i}
+                ref={checkboxItemRef}
+                todoItem={{ id: 0, description: "" }}
                 onSelectChange={() => true}
                 onBlur={(item) => saveItem(item)}
-                todoItem={item}
-                onDelete={onDelete}
               ></CheckboxItem>
-            ))}
-            <CheckboxItem
-              ref={checkboxItemRef}
-              todoItem={{ id: 0, description: "" }}
-              onSelectChange={() => true}
-              onBlur={(item) => saveItem(item)}
-            ></CheckboxItem>
-          </ScrollView>
-        </KeyboardAvoidingView>
-      </View>
+            </ScrollView>
+          </KeyboardAvoidingView>
+        </View>
+      )}
     </SafeAreaView>
   );
 }
