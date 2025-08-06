@@ -7,7 +7,7 @@ import { todoItems } from "@/db/schema";
 import { Item } from "@/types/global";
 import { eq } from "drizzle-orm";
 import { useEffect, useRef, useState } from "react";
-import { ScrollView, View } from "react-native";
+import { KeyboardAvoidingView, ScrollView, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Index() {
@@ -61,23 +61,25 @@ export default function Index() {
   return (
     <SafeAreaView className="h-full bg-gray-200 p-5">
       <View className="bg-white h-full rounded-lg">
-        <ScrollView ref={scrollRef}>
-          {items.map((item, i) => (
+        <KeyboardAvoidingView behavior="padding" keyboardVerticalOffset={100}>
+          <ScrollView ref={scrollRef}>
+            {items.map((item, i) => (
+              <CheckboxItem
+                key={i}
+                onSelectChange={() => true}
+                onBlur={(item) => saveItem(item)}
+                todoItem={item}
+                onDelete={onDelete}
+              ></CheckboxItem>
+            ))}
             <CheckboxItem
-              key={i}
+              ref={checkboxItemRef}
+              todoItem={{ id: 0, description: "" }}
               onSelectChange={() => true}
               onBlur={(item) => saveItem(item)}
-              todoItem={item}
-              onDelete={onDelete}
             ></CheckboxItem>
-          ))}
-          <CheckboxItem
-            ref={checkboxItemRef}
-            todoItem={{ id: 0, description: "" }}
-            onSelectChange={() => true}
-            onBlur={(item) => saveItem(item)}
-          ></CheckboxItem>
-        </ScrollView>
+          </ScrollView>
+        </KeyboardAvoidingView>
       </View>
     </SafeAreaView>
   );
