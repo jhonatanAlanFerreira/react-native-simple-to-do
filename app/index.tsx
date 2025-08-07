@@ -72,7 +72,7 @@ export default function Index() {
       )}
 
       {!loading && (
-        <View className="bg-white h-full rounded-lg p-2">
+        <View className="bg-white h-full p-2">
           <KeyboardAvoidingView behavior="padding" keyboardVerticalOffset={100}>
             <ScrollView ref={scrollRef}>
               <CheckboxItem

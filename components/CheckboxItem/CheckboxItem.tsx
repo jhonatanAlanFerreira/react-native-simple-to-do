@@ -54,7 +54,7 @@ export const CheckboxItem = forwardRef<
   };
 
   return (
-    <View className="pl-5 flex flex-row items-center justify-between gap-3 bg-gray-100 mb-2">
+    <View className="pl-5 p-1 flex flex-row items-center justify-between gap-3 bg-gray-100 mb-2">
       {!!item.id && <Checkbox value={isChecked} onValueChange={setChecked} />}
 
       <TextInput
@@ -70,7 +70,9 @@ export const CheckboxItem = forwardRef<
       />
 
       {isFocused && (
-        <Button onPress={resetAndBlur} color={"green"} title="Save" />
+        <View>
+          <Button onPress={resetAndBlur} color={"green"} title="Save" />
+        </View>
       )}
 
       {!!item.id && !isFocused && onDelete && (
