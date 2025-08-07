@@ -77,7 +77,7 @@ export default function Index() {
       )}
 
       {!loading && (
-        <View className="bg-white h-full rounded-lg">
+        <View className="bg-white h-full rounded-lg p-2">
           <KeyboardAvoidingView behavior="padding" keyboardVerticalOffset={100}>
             <ScrollView ref={scrollRef}>
               {items.map((item, i) => (
