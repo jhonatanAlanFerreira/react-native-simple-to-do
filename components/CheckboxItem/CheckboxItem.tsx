@@ -75,7 +75,8 @@ export const CheckboxItem = forwardRef<
 
       <TextInput
         ref={inputRef}
-        className={`flex-1 bg-gray-100 pl-2 rounded-lg ${item.checked ? "opacity-25" : ""}`}
+        className={`flex-1 bg-gray-100 pl-2 rounded-lg text-black bg-gray-100 ${item.checked ? "opacity-50" : ""}`}
+        placeholderTextColor="gray"
         placeholder="New Item"
         value={item.description}
         onBlur={resetAndBlur}
