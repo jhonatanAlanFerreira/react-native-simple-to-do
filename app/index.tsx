@@ -33,7 +33,7 @@ export default function Index() {
     if (item.id) {
       await db
         .update(todoItems)
-        .set({ description: item.description })
+        .set({ description: item.description, checked: item.checked })
         .where(eq(todoItems.id, item.id));
 
       loadItems();
@@ -51,7 +51,10 @@ export default function Index() {
   const loadItems = async () => {
     setLoading(true);
 
-    const res = await db.select().from(todoItems).orderBy(desc(todoItems.id));
+    const res = await db
+      .select()
+      .from(todoItems)
+      .orderBy(todoItems.checked, desc(todoItems.id));
     setItems(res as Item[]);
 
     setLoading(false);
@@ -77,15 +80,14 @@ export default function Index() {
             <ScrollView ref={scrollRef}>
               <CheckboxItem
                 ref={checkboxItemRef}
-                todoItem={{ id: 0, description: "" }}
-                onSelectChange={() => true}
-                onBlur={(item) => saveItem(item)}
+                todoItem={{ id: 0, description: "", checked: 0 }}
+                onBlur={saveItem}
               ></CheckboxItem>
               {items.map((item, i) => (
                 <CheckboxItem
                   key={i}
-                  onSelectChange={() => true}
-                  onBlur={(item) => saveItem(item)}
+                  onSelectChange={saveItem}
+                  onBlur={saveItem}
                   todoItem={item}
                   onDelete={onDelete}
                 ></CheckboxItem>

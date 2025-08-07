@@ -25,12 +25,15 @@ export const CheckboxItem = forwardRef<
   {
     todoItem: Item;
     onBlur: (item: Item) => void;
-    onSelectChange: () => void;
+    onSelectChange?: (item: Item) => void;
     onDelete?: (item: Item) => void;
   }
 >(({ todoItem, onBlur, onSelectChange, onDelete }, ref) => {
-  const [item, setItem] = useState<Item>({ id: 0, description: "" });
-  const [isChecked, setChecked] = useState(false);
+  const [item, setItem] = useState<Item>({
+    id: 0,
+    description: "",
+    checked: 0,
+  });
   const [isFocused, setIsFocused] = useState(false);
   const inputRef = useRef<RNTextInput>(null);
 
@@ -49,8 +52,15 @@ export const CheckboxItem = forwardRef<
     onBlur(item);
 
     if (!item.id && item.description) {
-      setItem({ id: 0, description: "" });
+      setItem({ id: 0, description: "", checked: 0 });
     }
+  };
+
+  const setChecked = (isChecked: boolean) => {
+    const checked = isChecked ? 1 : 0;
+
+    setItem((prev) => ({ ...prev, checked }));
+    onSelectChange && onSelectChange({ ...item, checked });
   };
 
   return (
@@ -58,14 +68,14 @@ export const CheckboxItem = forwardRef<
       {!!item.id && (
         <Checkbox
           style={{ transform: [{ scale: 1.3 }] }}
-          value={isChecked}
+          value={!!item.checked}
           onValueChange={setChecked}
         />
       )}
 
       <TextInput
         ref={inputRef}
-        className="flex-1 bg-gray-100 pl-2 rounded-lg"
+        className={`flex-1 bg-gray-100 pl-2 rounded-lg ${item.checked ? "opacity-25" : ""}`}
         placeholder="New Item"
         value={item.description}
         onBlur={resetAndBlur}

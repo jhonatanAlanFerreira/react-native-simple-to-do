@@ -5,7 +5,8 @@ export async function createSchemaIfNeeded(db: SQLiteDatabase) {
     await db.execAsync(`
       CREATE TABLE IF NOT EXISTS items (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        description TEXT NOT NULL
+        description TEXT NOT NULL,
+        checked TINYINT DEFAULT 0
       );
     `);
   } catch (err) {
