@@ -55,7 +55,13 @@ export const CheckboxItem = forwardRef<
 
   return (
     <View className="pl-5 p-1 flex flex-row items-center justify-between gap-3 bg-gray-100 mb-2">
-      {!!item.id && <Checkbox value={isChecked} onValueChange={setChecked} />}
+      {!!item.id && (
+        <Checkbox
+          style={{ transform: [{ scale: 1.3 }] }}
+          value={isChecked}
+          onValueChange={setChecked}
+        />
+      )}
 
       <TextInput
         ref={inputRef}
