@@ -5,7 +5,7 @@ import {
 import { db } from "@/db/client";
 import { todoItems } from "@/db/schema";
 import { Item } from "@/types/global";
-import { eq } from "drizzle-orm";
+import { desc, eq } from "drizzle-orm";
 import { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
@@ -43,12 +43,7 @@ export default function Index() {
       });
 
       loadItems().then(() => {
-        setTimeout(() => {
-          scrollRef.current?.scrollToEnd();
-          setTimeout(() => {
-            checkboxItemRef.current?.focus();
-          });
-        });
+        checkboxItemRef.current?.focus();
       });
     }
   };
@@ -56,7 +51,7 @@ export default function Index() {
   const loadItems = async () => {
     setLoading(true);
 
-    const res = await db.select().from(todoItems);
+    const res = await db.select().from(todoItems).orderBy(desc(todoItems.id));
     setItems(res as Item[]);
 
     setLoading(false);
@@ -80,6 +75,12 @@ export default function Index() {
         <View className="bg-white h-full rounded-lg p-2">
           <KeyboardAvoidingView behavior="padding" keyboardVerticalOffset={100}>
             <ScrollView ref={scrollRef}>
+              <CheckboxItem
+                ref={checkboxItemRef}
+                todoItem={{ id: 0, description: "" }}
+                onSelectChange={() => true}
+                onBlur={(item) => saveItem(item)}
+              ></CheckboxItem>
               {items.map((item, i) => (
                 <CheckboxItem
                   key={i}
@@ -89,12 +90,6 @@ export default function Index() {
                   onDelete={onDelete}
                 ></CheckboxItem>
               ))}
-              <CheckboxItem
-                ref={checkboxItemRef}
-                todoItem={{ id: 0, description: "" }}
-                onSelectChange={() => true}
-                onBlur={(item) => saveItem(item)}
-              ></CheckboxItem>
             </ScrollView>
           </KeyboardAvoidingView>
         </View>
