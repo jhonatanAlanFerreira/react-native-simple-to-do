@@ -38,7 +38,6 @@ export const CheckboxItem = forwardRef<CheckboxItemHandles, CheckboxItemProps>(
 
       if (!getItem().id && getItem().description) {
         setItem({ id: 0, description: "", checked: 0 });
-        console.log(getItem());
         onBlur(item);
       }
     };
