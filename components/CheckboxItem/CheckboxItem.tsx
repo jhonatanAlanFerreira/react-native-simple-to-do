@@ -44,7 +44,7 @@ export const CheckboxItem = forwardRef<CheckboxItemHandles, CheckboxItemProps>(
 
       setIsFocused(false);
 
-      if (!getItem().id && getItem().description) {
+      if (!item.id && item.description) {
         setItem({ id: 0, description: "", checked: 0 });
         onBlur(item);
       }
@@ -58,7 +58,9 @@ export const CheckboxItem = forwardRef<CheckboxItemHandles, CheckboxItemProps>(
     };
 
     return (
-      <View className="pl-5 p-1 flex flex-row items-center justify-between gap-3 bg-gray-100 mb-2">
+      <View
+        className={`pl-5 p-1 flex flex-row items-center justify-between gap-3 bg-gray-100 mb-2 ${getItem().checked ? "opacity-50" : ""}`}
+      >
         {!!getItem().id && (
           <Checkbox
             style={{ transform: [{ scale: 1.3 }] }}
@@ -69,7 +71,7 @@ export const CheckboxItem = forwardRef<CheckboxItemHandles, CheckboxItemProps>(
 
         <TextInput
           ref={inputRef}
-          className={`flex-1 bg-gray-100 pl-2 rounded-lg text-black bg-gray-100 ${getItem().checked ? "opacity-50" : ""}`}
+          className={`flex-1 bg-gray-100 pl-2 rounded-lg text-black bg-gray-100 ${getItem().checked ? "line-through" : ""}`}
           placeholderTextColor="gray"
           placeholder="New Item"
           value={getItem().description}
