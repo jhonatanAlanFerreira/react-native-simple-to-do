@@ -1,12 +1,5 @@
-import { Item } from "@/types/global";
 import Checkbox from "expo-checkbox";
-import {
-  forwardRef,
-  useEffect,
-  useImperativeHandle,
-  useRef,
-  useState,
-} from "react";
+import { forwardRef, useEffect, useImperativeHandle, useRef } from "react";
 import {
   Button,
   Pressable,
@@ -15,88 +8,81 @@ import {
   TextInput,
   View,
 } from "react-native";
+import { useCheckboxItemStore } from "./CheckboxItemStore";
+import { CheckboxItemProps } from "./CheckboxItemTypes";
 
 export interface CheckboxItemHandles {
   focus: () => void;
 }
 
-export const CheckboxItem = forwardRef<
-  CheckboxItemHandles,
-  {
-    todoItem: Item;
-    onBlur: (item: Item) => void;
-    onSelectChange?: (item: Item) => void;
-    onDelete?: (item: Item) => void;
-  }
->(({ todoItem, onBlur, onSelectChange, onDelete }, ref) => {
-  const [item, setItem] = useState<Item>({
-    id: 0,
-    description: "",
-    checked: 0,
-  });
-  const [isFocused, setIsFocused] = useState(false);
-  const inputRef = useRef<RNTextInput>(null);
+export const CheckboxItem = forwardRef<CheckboxItemHandles, CheckboxItemProps>(
+  ({ todoItem, onBlur, onSelectChange, onDelete }, ref) => {
+    const inputRef = useRef<RNTextInput>(null);
+    const { getIsFocused, getItem, setIsFocused, setItem } =
+      useCheckboxItemStore();
 
-  useEffect(() => {
-    setItem(todoItem);
-  }, [todoItem]);
+    useEffect(() => {
+      setItem(todoItem);
+    }, [todoItem]);
 
-  useImperativeHandle(ref, () => ({
-    focus: () => {
-      inputRef.current?.focus();
-    },
-  }));
+    useImperativeHandle(ref, () => ({
+      focus: () => {
+        inputRef.current?.focus();
+      },
+    }));
 
-  const resetAndBlur = () => {
-    setIsFocused(false);
-    onBlur(item);
+    const resetAndBlur = () => {
+      const item = getItem();
 
-    if (!item.id && item.description) {
-      setItem({ id: 0, description: "", checked: 0 });
-    }
-  };
+      setIsFocused(false);
 
-  const setChecked = (isChecked: boolean) => {
-    const checked = isChecked ? 1 : 0;
+      if (!getItem().id && getItem().description) {
+        setItem({ id: 0, description: "", checked: 0 });
+        console.log(getItem());
+        onBlur(item);
+      }
+    };
 
-    setItem((prev) => ({ ...prev, checked }));
-    onSelectChange && onSelectChange({ ...item, checked });
-  };
+    const setChecked = (isChecked: boolean) => {
+      const checked = isChecked ? 1 : 0;
 
-  return (
-    <View className="pl-5 p-1 flex flex-row items-center justify-between gap-3 bg-gray-100 mb-2">
-      {!!item.id && (
-        <Checkbox
-          style={{ transform: [{ scale: 1.3 }] }}
-          value={!!item.checked}
-          onValueChange={setChecked}
+      setItem({ ...getItem(), checked });
+      onSelectChange && onSelectChange({ ...getItem(), checked });
+    };
+
+    return (
+      <View className="pl-5 p-1 flex flex-row items-center justify-between gap-3 bg-gray-100 mb-2">
+        {!!getItem().id && (
+          <Checkbox
+            style={{ transform: [{ scale: 1.3 }] }}
+            value={!!getItem().checked}
+            onValueChange={setChecked}
+          />
+        )}
+
+        <TextInput
+          ref={inputRef}
+          className={`flex-1 bg-gray-100 pl-2 rounded-lg text-black bg-gray-100 ${getItem().checked ? "opacity-50" : ""}`}
+          placeholderTextColor="gray"
+          placeholder="New Item"
+          value={getItem().description}
+          onBlur={resetAndBlur}
+          onKeyPress={() => setIsFocused(true)}
+          onChangeText={(description) => setItem({ ...getItem(), description })}
         />
-      )}
 
-      <TextInput
-        ref={inputRef}
-        className={`flex-1 bg-gray-100 pl-2 rounded-lg text-black bg-gray-100 ${item.checked ? "opacity-50" : ""}`}
-        placeholderTextColor="gray"
-        placeholder="New Item"
-        value={item.description}
-        onBlur={resetAndBlur}
-        onKeyPress={() => setIsFocused(true)}
-        onChangeText={(description) =>
-          setItem((prev) => ({ ...prev, description }))
-        }
-      />
+        {getIsFocused() && (
+          <View>
+            <Button onPress={resetAndBlur} color={"green"} title="Save" />
+          </View>
+        )}
 
-      {isFocused && (
-        <View>
-          <Button onPress={resetAndBlur} color={"green"} title="Save" />
-        </View>
-      )}
-
-      {!!item.id && !isFocused && onDelete && (
-        <Pressable onPress={() => onDelete(item)} className="px-2">
-          <Text className="text-red-500 text-xl font-bold pr-5">×</Text>
-        </Pressable>
-      )}
-    </View>
-  );
-});
+        {!!getItem().id && !getIsFocused() && onDelete && (
+          <Pressable onPress={() => onDelete(getItem())} className="px-2">
+            <Text className="text-red-500 text-xl font-bold pr-5">×</Text>
+          </Pressable>
+        )}
+      </View>
+    );
+  }
+);

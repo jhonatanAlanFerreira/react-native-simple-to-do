@@ -1,7 +1,5 @@
-import {
-  CheckboxItem,
-  CheckboxItemHandles,
-} from "@/components/CheckboxItem/CheckboxItem";
+import { CheckboxItem } from "@/components/CheckboxItem/CheckboxItem";
+import { CheckboxItemHandles } from "@/components/CheckboxItem/CheckboxItemTypes";
 import { db } from "@/db/client";
 import { todoItems } from "@/db/schema";
 import { Item } from "@/types/global";
