@@ -1,5 +1,11 @@
 import Checkbox from "expo-checkbox";
-import { forwardRef, useEffect, useImperativeHandle, useRef } from "react";
+import {
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useMemo,
+  useRef,
+} from "react";
 import {
   Button,
   Pressable,
@@ -8,7 +14,7 @@ import {
   TextInput,
   View,
 } from "react-native";
-import { useCheckboxItemStore } from "./CheckboxItemStore";
+import { createCheckboxItemStore } from "./CheckboxItemStore";
 import { CheckboxItemProps } from "./CheckboxItemTypes";
 
 export interface CheckboxItemHandles {
@@ -18,6 +24,8 @@ export interface CheckboxItemHandles {
 export const CheckboxItem = forwardRef<CheckboxItemHandles, CheckboxItemProps>(
   ({ todoItem, onBlur, onSelectChange, onDelete }, ref) => {
     const inputRef = useRef<RNTextInput>(null);
+
+    const useCheckboxItemStore = useMemo(() => createCheckboxItemStore(), []);
     const { getIsFocused, getItem, setIsFocused, setItem } =
       useCheckboxItemStore();
 
