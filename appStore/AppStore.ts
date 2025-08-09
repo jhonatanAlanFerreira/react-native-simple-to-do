@@ -3,11 +3,14 @@ import { create } from "zustand";
 import { AppStore } from "./AppTypes";
 
 export const createAppStore = create<AppStore>((set, get) => ({
-  items: [],
+  todoItems: [],
+  completedItems: [],
   isLoading: false,
 
-  setItems: (items: Item[]) => set({ items }),
-  getItems: () => get().items,
+  setTodoItems: (todoItems: Item[]) => set({ todoItems }),
+  getTodoItems: () => get().todoItems,
+  setCompletedItems: (completedItems: Item[]) => set({ completedItems }),
+  getCompletedItems: () => get().completedItems,
   setIsLoading: (isLoading) => set({ isLoading }),
   getIsLoading: () => get().isLoading,
 }));

@@ -1,11 +1,12 @@
 import { createAppStore } from "@/appStore/AppStore";
 import { CheckboxItem } from "@/components/CheckboxItem/CheckboxItem";
 import { CheckboxItemHandles } from "@/components/CheckboxItem/CheckboxItemTypes";
+import { Title } from "@/components/Title/Title";
 import { db } from "@/db/client";
 import { todoItems } from "@/db/schema";
 import { Item } from "@/types/global";
 import { desc, eq } from "drizzle-orm";
-import { useEffect, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import {
   ActivityIndicator,
   KeyboardAvoidingView,
@@ -16,9 +17,15 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Index() {
   const checkboxItemRef = useRef<CheckboxItemHandles>(null);
-  const scrollRef = useRef<ScrollView>(null);
 
-  const { setIsLoading, getIsLoading, setItems, getItems } = createAppStore();
+  const {
+    setIsLoading,
+    getIsLoading,
+    setTodoItems,
+    getTodoItems,
+    setCompletedItems,
+    getCompletedItems,
+  } = createAppStore();
 
   useEffect(() => {
     loadItems();
@@ -46,7 +53,7 @@ export default function Index() {
       loadItems().then(() => {
         setTimeout(() => {
           checkboxItemRef.current?.focus();
-        }, 500);
+        }, 300);
       });
     }
   };
@@ -58,7 +65,8 @@ export default function Index() {
       .select()
       .from(todoItems)
       .orderBy(todoItems.checked, desc(todoItems.id));
-    setItems(res as Item[]);
+    setTodoItems(res.filter((item) => !item.checked) as Item[]);
+    setCompletedItems(res.filter((item) => item.checked) as Item[]);
 
     setIsLoading(false);
   };
@@ -78,17 +86,29 @@ export default function Index() {
           <ActivityIndicator size="small" color="#0000ff" />
         </View>
       )}
-
       {!getIsLoading() && (
         <View className="bg-white h-full p-2">
           <KeyboardAvoidingView behavior="padding" keyboardVerticalOffset={100}>
-            <ScrollView ref={scrollRef}>
+            <ScrollView>
               <CheckboxItem
                 ref={checkboxItemRef}
                 todoItem={{ id: 0, description: "", checked: 0 }}
                 onBlur={saveItem}
               ></CheckboxItem>
-              {getItems().map((item, i) => (
+              <Title title="To-Do Items"></Title>
+              {getTodoItems().map((item, i) => (
+                <CheckboxItem
+                  key={i}
+                  onSelectChange={saveItem}
+                  onBlur={saveItem}
+                  todoItem={item}
+                  onDelete={onDelete}
+                ></CheckboxItem>
+              ))}
+              <View className="mt-5">
+                <Title title="Completed Items"></Title>
+              </View>
+              {getCompletedItems().map((item, i) => (
                 <CheckboxItem
                   key={i}
                   onSelectChange={saveItem}
