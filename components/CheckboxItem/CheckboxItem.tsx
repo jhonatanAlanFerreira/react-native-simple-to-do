@@ -43,10 +43,10 @@ export const CheckboxItem = forwardRef<CheckboxItemHandles, CheckboxItemProps>(
       const item = getItem();
 
       setIsFocused(false);
+      onBlur(item);
 
       if (!item.id && item.description) {
         setItem({ id: 0, description: "", checked: 0 });
-        onBlur(item);
       }
     };
 

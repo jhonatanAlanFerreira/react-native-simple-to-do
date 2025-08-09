@@ -1,10 +1,11 @@
+import { createAppStore } from "@/appStore/AppStore";
 import { CheckboxItem } from "@/components/CheckboxItem/CheckboxItem";
 import { CheckboxItemHandles } from "@/components/CheckboxItem/CheckboxItemTypes";
 import { db } from "@/db/client";
 import { todoItems } from "@/db/schema";
 import { Item } from "@/types/global";
 import { desc, eq } from "drizzle-orm";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import {
   ActivityIndicator,
   KeyboardAvoidingView,
@@ -14,10 +15,10 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Index() {
-  const [items, setItems] = useState<Item[]>([]);
-  const [loading, setLoading] = useState(true);
   const checkboxItemRef = useRef<CheckboxItemHandles>(null);
   const scrollRef = useRef<ScrollView>(null);
+
+  const { setIsLoading, getIsLoading, setItems, getItems } = createAppStore();
 
   useEffect(() => {
     loadItems();
@@ -27,6 +28,8 @@ export default function Index() {
     if (!item.description) {
       return;
     }
+
+    setIsLoading(true);
 
     if (item.id) {
       await db
@@ -41,13 +44,15 @@ export default function Index() {
       });
 
       loadItems().then(() => {
-        checkboxItemRef.current?.focus();
+        setTimeout(() => {
+          checkboxItemRef.current?.focus();
+        }, 500);
       });
     }
   };
 
   const loadItems = async () => {
-    setLoading(true);
+    setIsLoading(true);
 
     const res = await db
       .select()
@@ -55,10 +60,12 @@ export default function Index() {
       .orderBy(todoItems.checked, desc(todoItems.id));
     setItems(res as Item[]);
 
-    setLoading(false);
+    setIsLoading(false);
   };
 
   const onDelete = (item: Item) => {
+    setIsLoading(true);
+
     db.delete(todoItems)
       .where(eq(todoItems.id, item.id))
       .then(() => loadItems());
@@ -66,13 +73,13 @@ export default function Index() {
 
   return (
     <SafeAreaView className="h-full bg-gray-200 p-5">
-      {loading && (
+      {getIsLoading() && (
         <View className="absolute w-screen h-screen flex justify-center z-10">
           <ActivityIndicator size="small" color="#0000ff" />
         </View>
       )}
 
-      {!loading && (
+      {!getIsLoading() && (
         <View className="bg-white h-full p-2">
           <KeyboardAvoidingView behavior="padding" keyboardVerticalOffset={100}>
             <ScrollView ref={scrollRef}>
@@ -81,7 +88,7 @@ export default function Index() {
                 todoItem={{ id: 0, description: "", checked: 0 }}
                 onBlur={saveItem}
               ></CheckboxItem>
-              {items.map((item, i) => (
+              {getItems().map((item, i) => (
                 <CheckboxItem
                   key={i}
                   onSelectChange={saveItem}
