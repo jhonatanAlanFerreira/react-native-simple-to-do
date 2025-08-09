@@ -5,12 +5,14 @@ import { Title } from "@/components/Title/Title";
 import { db } from "@/db/client";
 import { todoItems } from "@/db/schema";
 import { Item } from "@/types/global";
+import { Ionicons } from "@expo/vector-icons";
 import { desc, eq } from "drizzle-orm";
 import React, { useEffect, useRef } from "react";
 import {
   ActivityIndicator,
   KeyboardAvoidingView,
   ScrollView,
+  Text,
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -81,13 +83,14 @@ export default function Index() {
 
   return (
     <SafeAreaView className="h-full bg-gray-200 p-5">
+      <Ionicons className="mb-2" name="menu" size={30} color="gray" />
       {getIsLoading() && (
         <View className="absolute w-screen h-screen flex justify-center z-10">
           <ActivityIndicator size="small" color="#0000ff" />
         </View>
       )}
       {!getIsLoading() && (
-        <View className="bg-white h-full p-2">
+        <View className="bg-white flex-1 p-2">
           <KeyboardAvoidingView behavior="padding" keyboardVerticalOffset={100}>
             <ScrollView>
               <CheckboxItem
@@ -121,6 +124,11 @@ export default function Index() {
           </KeyboardAvoidingView>
         </View>
       )}
+      <View className="flex-row justify-between items-center px-4 mt-2">
+        <Ionicons name="arrow-back" size={30} color="gray" />
+        <Text className="text-gray-500">1/1</Text>
+        <Ionicons name="arrow-forward" size={30} color="gray" />
+      </View>
     </SafeAreaView>
   );
 }

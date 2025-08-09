@@ -58,11 +58,10 @@ export const CheckboxItem = forwardRef<CheckboxItemHandles, CheckboxItemProps>(
     };
 
     return (
-      <View
-        className={`pl-5 p-1 flex flex-row items-center justify-between gap-3 bg-gray-100 mb-2 ${getItem().checked ? "opacity-50" : ""}`}
-      >
+      <View className="pl-5 p-1 flex flex-row items-center justify-between gap-3 bg-gray-100 mb-2">
         {!!getItem().id && (
           <Checkbox
+            className={`${getItem().checked ? "opacity-50" : ""}`}
             style={{ transform: [{ scale: 1.3 }] }}
             value={!!getItem().checked}
             onValueChange={setChecked}
@@ -71,7 +70,7 @@ export const CheckboxItem = forwardRef<CheckboxItemHandles, CheckboxItemProps>(
 
         <TextInput
           ref={inputRef}
-          className={`flex-1 bg-gray-100 pl-2 rounded-lg text-black bg-gray-100 ${getItem().checked ? "line-through" : ""}`}
+          className={`flex-1 bg-gray-100 pl-2 rounded-lg text-black bg-gray-100 ${getItem().checked ? "line-through opacity-50" : ""}`}
           placeholderTextColor="gray"
           placeholder="New Item"
           value={getItem().description}
@@ -88,7 +87,11 @@ export const CheckboxItem = forwardRef<CheckboxItemHandles, CheckboxItemProps>(
 
         {!!getItem().id && !getIsFocused() && onDelete && (
           <Pressable onPress={() => onDelete(getItem())} className="px-2">
-            <Text className="text-red-500 text-xl font-bold pr-5">×</Text>
+            <Text
+              className={`text-red-500 text-xl font-bold pr-5 ${getItem().checked ? "opacity-50" : ""}`}
+            >
+              ×
+            </Text>
           </Pressable>
         )}
       </View>
