@@ -1,22 +1,15 @@
 import { Ionicons } from "@expo/vector-icons";
-import React, { ReactNode, useEffect, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import {
-    Animated,
-    Dimensions,
-    KeyboardAvoidingView,
-    Platform,
-    TouchableOpacity,
-    TouchableWithoutFeedback,
-    View,
+  Animated,
+  Dimensions,
+  KeyboardAvoidingView,
+  Platform,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  View,
 } from "react-native";
-
-type Props = {
-  visible: boolean;
-  onClose: () => void;
-  children: ReactNode;
-  overlayClosable?: boolean;
-  modalHeight?: number;
-};
+import { AbsoluteModalProps } from "./AbsoluteModalTypes";
 
 export default function AbsoluteModal({
   visible,
@@ -24,7 +17,7 @@ export default function AbsoluteModal({
   children,
   overlayClosable = true,
   modalHeight = 300,
-}: Props) {
+}: AbsoluteModalProps) {
   const opacity = useRef(new Animated.Value(0)).current;
   const translateY = useRef(new Animated.Value(modalHeight)).current;
 

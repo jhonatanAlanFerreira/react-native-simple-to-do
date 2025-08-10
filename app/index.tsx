@@ -1,7 +1,7 @@
 import { createAppStore } from "@/appStore/AppStore";
+import AbsoluteModal from "@/components/AbsoluteModal/AbsoluteModal";
 import { CheckboxItem } from "@/components/CheckboxItem/CheckboxItem";
 import { CheckboxItemHandles } from "@/components/CheckboxItem/CheckboxItemTypes";
-import AbsoluteModal from "@/components/Modal/Modal";
 import { Title } from "@/components/Title/Title";
 import { db } from "@/db/client";
 import { lists, todoItems } from "@/db/schema";
