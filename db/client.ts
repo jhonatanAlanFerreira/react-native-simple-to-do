@@ -1,9 +1,12 @@
 import { drizzle } from "drizzle-orm/expo-sqlite";
 import { openDatabaseSync } from "expo-sqlite";
-import { todoItems } from "./schema";
+import { lists, todoItems } from "./schema";
 
 const expoDb = openDatabaseSync("todo.db");
 
 export const db = drizzle(expoDb, {
-  schema: { todoItems },
+  schema: {
+    lists,
+    todoItems,
+  },
 });

@@ -3,7 +3,7 @@ import { CheckboxItem } from "@/components/CheckboxItem/CheckboxItem";
 import { CheckboxItemHandles } from "@/components/CheckboxItem/CheckboxItemTypes";
 import { Title } from "@/components/Title/Title";
 import { db } from "@/db/client";
-import { todoItems } from "@/db/schema";
+import { lists, todoItems } from "@/db/schema";
 import { Item } from "@/types/global";
 import { Ionicons } from "@expo/vector-icons";
 import { desc, eq } from "drizzle-orm";
@@ -25,13 +25,42 @@ export default function Index() {
     getIsLoading,
     setTodoItems,
     getTodoItems,
+    setLists,
+    getLists,
     setCompletedItems,
     getCompletedItems,
+    setCurrentListIndex,
+    getCurrentListIndex,
   } = createAppStore();
 
   useEffect(() => {
-    loadItems();
+    loadData();
   }, []);
+
+  const loadData = async () => {
+    await retrieveList();
+    loadItems();
+  };
+
+  const retrieveList = async () => {
+    setIsLoading(true);
+
+    const res = await db.select().from(lists);
+
+    if (res.length) {
+      setLists(res);
+    } else {
+      await createNewList();
+      const itemsLists = await db.select().from(lists);
+      setLists(itemsLists);
+    }
+
+    setIsLoading(false);
+  };
+
+  const createNewList = async () => {
+    await db.insert(lists).values({});
+  };
 
   const saveItem = async (item: Item) => {
     if (!item.description) {
@@ -50,6 +79,7 @@ export default function Index() {
     } else {
       await db.insert(todoItems).values({
         description: item.description,
+        listId: getLists()[getCurrentListIndex()].id,
       });
 
       loadItems().then(() => {
@@ -67,6 +97,7 @@ export default function Index() {
       .select()
       .from(todoItems)
       .orderBy(todoItems.checked, desc(todoItems.id));
+
     setTodoItems(res.filter((item) => !item.checked) as Item[]);
     setCompletedItems(res.filter((item) => item.checked) as Item[]);
 
@@ -126,7 +157,7 @@ export default function Index() {
       )}
       <View className="flex-row justify-between items-center px-4 mt-2">
         <Ionicons name="arrow-back" size={30} color="gray" />
-        <Text className="text-gray-500">1/1</Text>
+        <Text className="text-gray-500">{`${getCurrentListIndex() + 1}/${getLists().length} Lists`}</Text>
         <Ionicons name="arrow-forward" size={30} color="gray" />
       </View>
     </SafeAreaView>
