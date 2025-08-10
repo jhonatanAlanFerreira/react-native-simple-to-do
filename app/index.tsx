@@ -84,7 +84,7 @@ export default function Index() {
     } else {
       await db.insert(todoItems).values({
         description: item.description,
-        listId: getLists()[getCurrentListIndex()].id,
+        listId: getCurrentListId(),
       });
 
       loadItems().then(() => {
@@ -101,6 +101,7 @@ export default function Index() {
     const res = await db
       .select()
       .from(todoItems)
+      .where(eq(todoItems.listId, getCurrentListId()))
       .orderBy(todoItems.checked, desc(todoItems.id));
 
     setTodoItems(res.filter((item) => !item.checked) as Item[]);
@@ -115,6 +116,50 @@ export default function Index() {
     db.delete(todoItems)
       .where(eq(todoItems.id, item.id))
       .then(() => loadItems());
+  };
+
+  const onPressCreateNew = async () => {
+    setIsModalOpened(false);
+    setIsLoading(true);
+
+    await createNewList();
+    await retrieveList();
+
+    setCurrentListIndex(getLists().length - 1);
+    loadItems();
+  };
+
+  const nextList = () => {
+    const nextIndex = getCurrentListIndex() + 1;
+
+    if (nextIndex < getLists().length) {
+      setCurrentListIndex(nextIndex);
+      loadItems();
+    }
+  };
+
+  const previousList = () => {
+    if (getCurrentListIndex()) {
+      setCurrentListIndex(getCurrentListIndex() - 1);
+      loadItems();
+    }
+  };
+
+  const removeCurrentList = async () => {
+    setIsModalOpened(false);
+
+    await db.delete(lists).where(eq(lists.id, getCurrentListId()));
+    await retrieveList();
+
+    if (getCurrentListIndex()) {
+      setCurrentListIndex(getCurrentListIndex() - 1);
+    }
+
+    loadItems();
+  };
+
+  const getCurrentListId = () => {
+    return getLists()[getCurrentListIndex()].id;
   };
 
   return (
@@ -167,9 +212,19 @@ export default function Index() {
         </View>
       )}
       <View className="flex-row justify-between items-center px-4 mt-2">
-        <Ionicons name="arrow-back" size={30} color="gray" />
+        <Ionicons
+          onPress={previousList}
+          name="arrow-back"
+          size={30}
+          color="gray"
+        />
         <Text className="text-gray-500">{`${getCurrentListIndex() + 1}/${getLists().length} Lists`}</Text>
-        <Ionicons name="arrow-forward" size={30} color="gray" />
+        <Ionicons
+          onPress={nextList}
+          name="arrow-forward"
+          size={30}
+          color="gray"
+        />
       </View>
 
       <AbsoluteModal
@@ -178,7 +233,7 @@ export default function Index() {
       >
         <View className="pt-10">
           <Pressable
-            onPress={() => {}}
+            onPress={onPressCreateNew}
             className="rounded-lg border border-gray-300 bg-white px-4 py-3 shadow-sm mb-4"
             android_ripple={{ color: "rgba(0,0,0,0.05)" }}
           >
@@ -191,13 +246,13 @@ export default function Index() {
             onPress={() => {
               Alert.alert(
                 "Confirm Delete",
-                "Are you sure you want to delete this item?",
+                "Are you sure you want to delete this entire list?",
                 [
                   { text: "Cancel", style: "cancel" },
                   {
                     text: "Delete",
                     style: "destructive",
-                    onPress: () => {},
+                    onPress: removeCurrentList,
                   },
                 ],
                 { cancelable: true }
