@@ -8,6 +8,7 @@ export const createAppStore = create<AppStore>((set, get) => ({
   lists: [],
   isLoading: false,
   currentListIndex: 0,
+  isModalOpened: false,
 
   setTodoItems: (todoItems: Item[]) => set({ todoItems }),
   getTodoItems: () => get().todoItems,
@@ -19,4 +20,6 @@ export const createAppStore = create<AppStore>((set, get) => ({
   getIsLoading: () => get().isLoading,
   setCurrentListIndex: (currentListIndex: number) => set({ currentListIndex }),
   getCurrentListIndex: () => get().currentListIndex,
+  setIsModalOpened: (isModalOpened: boolean) => set({ isModalOpened }),
+  getIsModalOpened: () => get().isModalOpened,
 }));

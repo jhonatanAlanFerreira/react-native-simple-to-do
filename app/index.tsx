@@ -1,6 +1,7 @@
 import { createAppStore } from "@/appStore/AppStore";
 import { CheckboxItem } from "@/components/CheckboxItem/CheckboxItem";
 import { CheckboxItemHandles } from "@/components/CheckboxItem/CheckboxItemTypes";
+import AbsoluteModal from "@/components/Modal/Modal";
 import { Title } from "@/components/Title/Title";
 import { db } from "@/db/client";
 import { lists, todoItems } from "@/db/schema";
@@ -10,7 +11,9 @@ import { desc, eq } from "drizzle-orm";
 import React, { useEffect, useRef } from "react";
 import {
   ActivityIndicator,
+  Alert,
   KeyboardAvoidingView,
+  Pressable,
   ScrollView,
   Text,
   View,
@@ -31,6 +34,8 @@ export default function Index() {
     getCompletedItems,
     setCurrentListIndex,
     getCurrentListIndex,
+    setIsModalOpened,
+    getIsModalOpened,
   } = createAppStore();
 
   useEffect(() => {
@@ -114,7 +119,13 @@ export default function Index() {
 
   return (
     <SafeAreaView className="h-full bg-gray-200 p-5">
-      <Ionicons className="mb-2" name="menu" size={30} color="gray" />
+      <Ionicons
+        onPress={() => setIsModalOpened(true)}
+        className="mb-2"
+        name="menu"
+        size={30}
+        color="gray"
+      />
       {getIsLoading() && (
         <View className="absolute w-screen h-screen flex justify-center z-10">
           <ActivityIndicator size="small" color="#0000ff" />
@@ -160,6 +171,47 @@ export default function Index() {
         <Text className="text-gray-500">{`${getCurrentListIndex() + 1}/${getLists().length} Lists`}</Text>
         <Ionicons name="arrow-forward" size={30} color="gray" />
       </View>
+
+      <AbsoluteModal
+        visible={getIsModalOpened()}
+        onClose={() => setIsModalOpened(false)}
+      >
+        <View className="pt-10">
+          <Pressable
+            onPress={() => {}}
+            className="rounded-lg border border-gray-300 bg-white px-4 py-3 shadow-sm mb-4"
+            android_ripple={{ color: "rgba(0,0,0,0.05)" }}
+          >
+            <Text className="text-center text-gray-800 text-lg font-medium">
+              Create New List
+            </Text>
+          </Pressable>
+
+          <Pressable
+            onPress={() => {
+              Alert.alert(
+                "Confirm Delete",
+                "Are you sure you want to delete this item?",
+                [
+                  { text: "Cancel", style: "cancel" },
+                  {
+                    text: "Delete",
+                    style: "destructive",
+                    onPress: () => {},
+                  },
+                ],
+                { cancelable: true }
+              );
+            }}
+            className="rounded-lg border border-gray-300 bg-white px-4 py-3 shadow-sm"
+            android_ripple={{ color: "rgba(0,0,0,0.05)" }}
+          >
+            <Text className="text-center text-red-800 text-lg font-medium">
+              Remove Current List
+            </Text>
+          </Pressable>
+        </View>
+      </AbsoluteModal>
     </SafeAreaView>
   );
 }

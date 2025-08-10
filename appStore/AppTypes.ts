@@ -6,6 +6,7 @@ export interface AppState {
   lists: List[];
   currentListIndex: number;
   isLoading: boolean;
+  isModalOpened: boolean;
 }
 
 export interface AppStore extends AppState {
@@ -19,4 +20,6 @@ export interface AppStore extends AppState {
   getIsLoading: () => boolean;
   setCurrentListIndex: (index: number) => void;
   getCurrentListIndex: () => number;
+  setIsModalOpened: (isModalOpened: boolean) => void;
+  getIsModalOpened: () => boolean;
 }
